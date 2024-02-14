@@ -17,10 +17,6 @@ class tensor:
         self.shape = np.shape(self.data)
     def __repr__(self):return f"<Tensor {self.data}, requires?={self.requires}, Grad: {self.grad}>" if (not DEPENDENCIES_CTX_DEBUG) else f"<Tensor {self.data}, grad={self.requires}, dependencies={[i.data for i in self.dependencies]}, ctx=None >"
     def __str__(self):return f"<Tensor {self.data}, requires?={self.requires}, Grad: {self.grad}>" if (not DEPENDENCIES_CTX_DEBUG) else f"<Tensor {self.data}, grad={self.requires}, dependencies={[i.data for i in self.dependencies]}>"
-    @property
-    def shape(self): return self.shape
-    @property
-    def dtype(self): return self.dtype
     def detach(self): return tensor(self.data)
 
     ########## STATICMETHODS ########## 
@@ -141,12 +137,35 @@ class tensor:
     def matmul(self, x): 
         out = tensor(self.data.__matmul__(x.data), dependencies=[self, x])
         def backward():
-            self.grad = out.grad @ x.transpose()# n, k
-            x.grad = self.transpose()@ out.grad # k, m
-                                                # n, m
+            self.grad = out.grad @ x.transpose()
+            x.grad = self.transpose()@ out.grad 
         self.ctx = backward
         x.ctx = backward
         return out
+    def dot(self, x):
+        SS = len(self.shape)
+        XX = len(x.shape)
+        if ((SS==2) and (XX==2)): 
+            return self.matmul(x)
+        elif (SS==2) and (XX==1):
+            out = tensor(self.data.dot(x.data), dependencies=[self, x])
+            def backward():
+                self.grad = tensor(np.expand_dims(out.grad.data, axis=1))@tensor(np.expand_dims(x.data, axis=0))
+                x.grad = self.transpose()@out.grad
+            self.ctx = backward
+            x.ctx = backward
+            return out
+        elif (SS==1) and (XX==2):
+            out = tensor(x.data.dot(self.data), dependencies=[self, x])
+            def backward():
+                self.grad = x.transpose()@out.grad 
+                x.grad = tensor(np.expand_dims(out.grad.data, axis=1))@tensor(np.expand_dims(self.data, axis=0))
+            self.ctx = backward
+            x.ctx = backward
+            return out
+        else:
+            out = tensor(self.data.dot(x.data), dependencies=[self, x])
+            print(f"GRAD NOT SUPPORTED FOR DIMS: {SS}, {XX}")
     def tdot(self, x): return tensor(np.tensordot(self.data, x.data, axes=0), dependencies=[self, x])
     def nroot(self, n):
         out = tensor(np.power(self.data, (1/n)), dependencies=[self])
