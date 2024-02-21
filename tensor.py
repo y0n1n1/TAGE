@@ -28,13 +28,13 @@ class tensor:
             return x*function()
         return tensor(create(base), requires=requires)
     @staticmethod
-    def zeros(shape, requires=True): return tensor(np.zeros(shape, dtype=np.float32), requires=requires)
+    def zeros(*args, requires=True): return tensor(np.zeros(*args, dtype=np.float32), requires=requires)
     @staticmethod
-    def ones(shape, requires=True): return tensor(np.ones(shape, dtype=np.float32), requires=requires)
+    def ones(*args, requires=True): return tensor(np.ones(*args, dtype=np.float32), requires=requires)
     @staticmethod
-    def randn(shape, requires=True): return tensor(np.random.randn(shape).astype(np.float32), requires=requires)
+    def randn(*args, requires=True): return tensor(np.random.randn(*args).astype(np.float32), requires=requires)
     @staticmethod
-    def rand(shape, requires=True): return tensor(np.random.rand(shape).astype(np.float32), requires=requires)
+    def rand(*args, requires=True): return tensor(np.random.rand(*args).astype(np.float32), requires=requires)
     @staticmethod
     def randint(low, high, shape, requires=True): 
         def intf():
@@ -84,9 +84,6 @@ class tensor:
         return self
 
     ########## OPS ##########
-    # TODO
-    # Sin, Relu, log, exp, sigmoid, Max, min
-
     ########## 2 ITEM OPS ##########
     def add(self, x): 
         if isinstance(x, float) or isinstance(x, int):out = tensor(self.data.__add__(x), dependencies=[self])
@@ -179,7 +176,7 @@ class tensor:
     def sum(self):
         out = tensor(np.array(self.data.sum()), dependencies=[self])
         def backward():
-            self.grad = tensor.ones(self.shape)
+            self.grad = tensor.ones(self.shape) * out.grad
         self.ctx = backward
         return out
     def neg(self):
