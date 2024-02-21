@@ -41,9 +41,13 @@ print(f"GRAD: {l.grad.numpy()}")
 Currently, TAGE contains the following functions:
 * zeros
 * ones
-* matmul
 * randn
+* rand
+* randint
 * eye
+* normal
+* uniform
+* numpy
 * transpose
 * add
 * sub
@@ -51,8 +55,10 @@ Currently, TAGE contains the following functions:
 * pow
 * truediv
 * matmul
+* dot
 * tdot
 * nroot
 * sum
 * neg
 * sqrt
+
