@@ -127,7 +127,7 @@ class Tensor:
         if (not (isinstance(x, float) or isinstance(x, int))):out = Tensor(self.data.__truediv__(x.data), dependencies=[self, x])
         else: out = Tensor(self.data.__truediv__(x), dependencies=[self])
         def backward():
-            self.grad = Tensor(1/x.data)*out.grad
+            self.grad = Tensor(1/x.data)*out.grad if (not (isinstance(x, float) or isinstance(x, int))) else Tensor(1/x)*out.grad
             if (not (isinstance(x, float) or isinstance(x, int))):x.grad = (-Tensor(self.data.__truediv__(np.power(x.data, 2))))*out.grad
         self.ctx = backward
         if (not (isinstance(x, float) or isinstance(x, int))):x.ctx = backward
