@@ -51,6 +51,7 @@ print(f"{b.grad.numpy()}") # returns:
 Currently, TAGE contains the following functions:
 * zeros
 * ones
+* matmul
 * randn
 * eye
 * transpose
