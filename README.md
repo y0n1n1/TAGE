@@ -4,22 +4,21 @@ A Tensor-based Automatic Gradient Engine in python using NumPy for fast computat
 ## Example
 heres a simple example of using tensors and calling the .backward() function. TAGE generally features similar syntax as alternatives like PyTorch and Tinygrad 
 ```python
-from tensor import tensor
+from tensor import Tensor
 
-# Perform Ops:
-x = tensor.randn(5, 6)
-y = tensor.rand(6, 3)
+# calculate output
+x = Tensor.randn(5, 6)
+y = Tensor.rand(6, 3)
 z = x.matmul(y)
-w = tensor.rand(3)
+w = Tensor.rand(3)
 j = z.dot(w)
-k = (j - tensor.rand(5))*tensor.randint(-10, -3, (5))/(30*tensor.ones(5))
+k = (j - Tensor.rand(5))*Tensor.randint(-10, -3, (5))/(30*Tensor.ones(5))
 m = k/(-1)
 l = m.sum()
-
-# Call backward
+# call backward() with respect to the output
 l.backward()
 
-# See grads
+# results
 print(x.numpy())
 print(f"GRAD: {x.grad.numpy()}")
 print(y.numpy())
