@@ -84,6 +84,7 @@ class tensor:
         return self
 
     ########## OPS ##########
+
     ########## 2 ITEM OPS ##########
     def add(self, x): 
         if isinstance(x, float) or isinstance(x, int):out = tensor(self.data.__add__(x), dependencies=[self])
@@ -201,3 +202,4 @@ class tensor:
     def __rpow__(self, x): return self.pow(x)
     def __rtruediv__(self, x): return self.truediv(x)
     def __rmatmul__(self, x): return self.matmul(x)
+
